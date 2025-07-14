@@ -1,0 +1,149 @@
+[
+    {
+        "timestamp": "2025-07-04T10:07:48.054573+00:00",
+        "workforce_id": "140002451124624",
+        "event_type": "worker_created",
+        "worker_id": "f985c9b6-c237-4c4c-aa50-2af373b2f385",
+        "worker_type": "SingleAgentWorker",
+        "role": "Search Agent: Can search the web, extract webpage content, simulate browser actions, and provide relevant information to solve the given task.",
+        "metadata": {}
+    },
+    {
+        "timestamp": "2025-07-04T10:07:48.073115+00:00",
+        "workforce_id": "140002451124624",
+        "event_type": "worker_created",
+        "worker_id": "223fc426-8dda-48b6-ba86-6ee01235cb2a",
+        "worker_type": "SingleAgentWorker",
+        "role": "Developer Agent: A skilled coding assistant that can write and execute code, run terminal commands, and verify solutions to complete tasks.",
+        "metadata": {}
+    },
+    {
+        "timestamp": "2025-07-04T10:07:48.125496+00:00",
+        "workforce_id": "140002451124624",
+        "event_type": "worker_created",
+        "worker_id": "48f93f9e-4db6-4086-99fa-8b90fde6ce71",
+        "worker_type": "SingleAgentWorker",
+        "role": "Multi-Modal Agent: A multi-modal processing assistant for analyzing, and generating media content like audio and images.",
+        "metadata": {}
+    },
+    {
+        "timestamp": "2025-07-04T10:07:48.240721+00:00",
+        "workforce_id": "140002451124624",
+        "event_type": "task_created",
+        "task_id": "0",
+        "description": "On July 15, 2008, Phys.org published an article about a catastrophe. Find the explosive force of this catastrophe according to Encyclopedia Britannica, then find the name of the US nuclear test that had the same yield. Your answer should only be the last word of the name of the test.",
+        "parent_task_id": null,
+        "task_type": null,
+        "metadata": {}
+    },
+    {
+        "timestamp": "2025-07-04T10:08:00.405596+00:00",
+        "workforce_id": "140002451124624",
+        "event_type": "task_decomposed",
+        "parent_task_id": "0",
+        "subtask_ids": [
+            "0.0",
+            "0.1"
+        ],
+        "metadata": {}
+    },
+    {
+        "timestamp": "2025-07-04T10:08:00.405626+00:00",
+        "workforce_id": "140002451124624",
+        "event_type": "task_created",
+        "task_id": "0.0",
+        "description": "Use Search Agent to find and extract the explosive force of the catastrophe from the Phys.org article published on July 15, 2008.",
+        "parent_task_id": "0",
+        "task_type": null,
+        "metadata": {}
+    },
+    {
+        "timestamp": "2025-07-04T10:08:00.405636+00:00",
+        "workforce_id": "140002451124624",
+        "event_type": "task_created",
+        "task_id": "0.1",
+        "description": "Use Search Agent to find the name of the US nuclear test with the same explosive yield as the catastrophe according to Encyclopedia Britannica, and extract the last word of the test's name.",
+        "parent_task_id": "0",
+        "task_type": null,
+        "metadata": {}
+    },
+    {
+        "timestamp": "2025-07-04T10:08:07.581471+00:00",
+        "workforce_id": "140002451124624",
+        "event_type": "task_assigned",
+        "task_id": "0.0",
+        "worker_id": "f985c9b6-c237-4c4c-aa50-2af373b2f385",
+        "queue_time_seconds": null,
+        "dependencies": [],
+        "metadata": {}
+    },
+    {
+        "timestamp": "2025-07-04T10:08:07.581497+00:00",
+        "workforce_id": "140002451124624",
+        "event_type": "task_assigned",
+        "task_id": "0.1",
+        "worker_id": "f985c9b6-c237-4c4c-aa50-2af373b2f385",
+        "queue_time_seconds": null,
+        "dependencies": [],
+        "metadata": {}
+    },
+    {
+        "timestamp": "2025-07-04T10:08:07.581538+00:00",
+        "workforce_id": "140002451124624",
+        "event_type": "task_started",
+        "task_id": "0.0",
+        "worker_id": "f985c9b6-c237-4c4c-aa50-2af373b2f385",
+        "metadata": {}
+    },
+    {
+        "timestamp": "2025-07-04T10:08:07.581576+00:00",
+        "workforce_id": "140002451124624",
+        "event_type": "task_started",
+        "task_id": "0.1",
+        "worker_id": "f985c9b6-c237-4c4c-aa50-2af373b2f385",
+        "metadata": {}
+    },
+    {
+        "timestamp": "2025-07-04T10:09:01.132853+00:00",
+        "workforce_id": "140002451124624",
+        "event_type": "task_completed",
+        "task_id": "0.0",
+        "worker_id": "f985c9b6-c237-4c4c-aa50-2af373b2f385",
+        "result_summary": "The explosive force of the catastrophe mentioned in the Phys.org article published on July 15, 2008, referring to the Kyshtym disaster (explosion of buried nuclear waste in Chelyabinsk oblast, Russia, on September 29, 1957), is equivalent to at least 70 tons of TNT.",
+        "processing_time_seconds": 53.55131983757019,
+        "token_usage": {
+            "total_tokens": 141138
+        },
+        "metadata": {
+            "current_state": "DONE"
+        }
+    },
+    {
+        "timestamp": "2025-07-04T10:10:01.780495+00:00",
+        "workforce_id": "140002451124624",
+        "event_type": "task_completed",
+        "task_id": "0.1",
+        "worker_id": "f985c9b6-c237-4c4c-aa50-2af373b2f385",
+        "result_summary": "The US nuclear test with the same explosive yield as the Kyshtym disaster is the \"Troublesome\" test.",
+        "processing_time_seconds": 114.19890022277832,
+        "token_usage": {
+            "total_tokens": 361456
+        },
+        "metadata": {
+            "current_state": "DONE"
+        }
+    },
+    {
+        "timestamp": "2025-07-04T10:10:01.780626+00:00",
+        "workforce_id": "140002451124624",
+        "event_type": "task_completed",
+        "task_id": "0",
+        "worker_id": "unknown",
+        "result_summary": "Completed",
+        "processing_time_seconds": null,
+        "token_usage": {},
+        "metadata": {
+            "current_state": "DONE"
+        }
+    }
+]
