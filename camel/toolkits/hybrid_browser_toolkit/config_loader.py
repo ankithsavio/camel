@@ -261,7 +261,7 @@ class BrowserConfig:
                 'AppleWebKit/537.36 (KHTML, like Gecko) '
                 'Chrome/131.0.0.0 Safari/537.36'
             ),
-            'viewport': {'width': 1920, 'height': 1080},
+            'viewport': {'width': 1280, 'height': 720},
             'locale': 'en-US',
             'timezone_id': 'America/New_York',
             'geolocation': {'latitude': 40.7128, 'longitude': -74.0060},

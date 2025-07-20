@@ -42,6 +42,12 @@ model_backend = ModelFactory.create(
     model_config_dict={"temperature": 0.0, "top_p": 1},
 )
 
+model_backend = ModelFactory.create(
+    model_platform=ModelPlatformType.OPENAI,
+    model_type=ModelType.GPT_4_1_MINI,
+    model_config_dict={"temperature": 0.0, "top_p": 1},
+)
+
 # Example 1: Use default tools (basic functionality)
 # web_toolkit_default = HybridBrowserToolkit(
 #     headless=False,
@@ -61,12 +67,13 @@ model_backend = ModelFactory.create(
 custom_tools = [
     "open_browser",
     "close_browser",
-    "visit_page",
+    # "visit_page",
     "click",
     "type",
     "back",
     "forward",
     "switch_tab",
+    "enter",
 ]
 
 web_toolkit_custom = HybridBrowserToolkit(
@@ -104,12 +111,14 @@ and click on other websites.
 If you encounter "snapshot": "snapshot not changed" when clicking, it might 
 be because you've clicked on plain text that doesn't lead to another page. 
 Don't be discouraged—keep trying to click on different links (but do not 
-click the same reference more than once). Note that in the Google search 
-results, the text inside the heading tags is clickable and will lead to the 
-result page.
+click the same reference more than once). 
 
-
+Use enter to confirm search or input.
 """
+TASK_PROMPT = (
+    "Use Google Search and provide me the exact last line from "
+    "the definition of SVG in wikipedia."
+)
 
 
 async def main() -> None:
@@ -132,9 +141,7 @@ async def main() -> None:
         # Give Playwright time to fully shut down subprocesses
         await asyncio.sleep(0.5)
     except Exception as err:
-        logging.warning(
-            "Failed to close " "browser session explicitly: %s", err
-        )
+        logging.warning("Failed to close browser session explicitly: %s", err)
 
 
 if __name__ == "__main__":

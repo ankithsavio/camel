@@ -90,17 +90,32 @@ class BrowserDebugDemo:
             print(f"Navigation result: {result['snapshot']}")
 
             # Auto-execute click e117 for testing
-            # print("\nAuto-executing 'click e117' for testing...")
-            # try:
-            #     click_result = await self._cmd_click(['e117'])
-            #     print(f"Auto-click result: {click_result}")
-            # except Exception as e:
-            #     print(f"Auto-click failed: {e}")
-            #     import traceback
-            #     traceback.print_exc()
+            print("\nAuto-executing 'click e117' for testing...")
+            try:
+                click_result = await self._cmd_click(['e117'])
+                print(f"Auto-click result: {click_result}")
+            except Exception as e:
+                print(f"Auto-click failed: {e}")
+                import traceback
+
+                traceback.print_exc()
+
+            # auto google search
+            # Auto-execute click e117 for testing
+            print("\nAuto-executing 'type e43' for testing...")
+            try:
+                # click_result = await self._cmd_click(['e117'])
+                await self._cmd_type(['e43', 'SVG'])
+                enter_result = await self._cmd_enter([])
+                print(f"Auto-click result: {enter_result}")
+            except Exception as e:
+                print(f"Auto-click failed: {e}")
+                import traceback
+
+                traceback.print_exc()
 
             # Start interactive loop
-            await self._interactive_loop()
+            # await self._interactive_loop()
 
         except KeyboardInterrupt:
             print("\nDemo interrupted by user")
@@ -109,8 +124,8 @@ class BrowserDebugDemo:
             import traceback
 
             traceback.print_exc()
-        finally:
-            await self._cleanup()
+        # finally:
+        #     await self._cleanup()
 
     async def _interactive_loop(self):
         """Main interactive command loop."""
@@ -209,6 +224,8 @@ class BrowserDebugDemo:
             return await self._cmd_get_tab_info(args)
         elif cmd == 'debug_elements':
             return await self._cmd_debug_elements(args)
+        elif cmd == 'debug':
+            return await self._debug_element_info(args[0])
         elif cmd == 'snapshot_mode':
             return await self._cmd_snapshot_mode(args)
         else:
@@ -255,6 +272,7 @@ Multi-Tab Management:
 Utilities:
   wait                        - Wait for manual user intervention
   debug_elements              - Show all available element references
+  debug               - check locator counts 
   snapshot_mode               - Show current snapshot mode
   help                        - Show this help message
   exit                        - Exit the program
@@ -327,9 +345,9 @@ Tips:
 
             result = await self.toolkit.click(ref=ref)
             return (
-                "Clicked element {ref}\nFull "
+                f"Clicked element {ref}\nFull "
                 f"result: {self._get_result_snapshot(result)}"
-                f"\n Click History : {' '.join(self.click_track)}"
+                # f"\n Click History : {' '.join(self.click_track)}"
             )
         except Exception as e:
             return f"Click failed: {e}"
@@ -688,9 +706,9 @@ Tips:
     def _get_result_snapshot(self, result: Dict[str, Any]):
         snapshot = result['snapshot']
 
-        decorate_end = f"{Fore.GREEN}" + ("@" * 150) + f"{Fore.RESET}"
+        # decorate_end = f"{Fore.GREEN}" + ("@" * 150) + f"{Fore.RESET}"
 
-        return snapshot + "\n" + decorate_end
+        return snapshot  # + "\n" + decorate_end
 
 
 async def main():
