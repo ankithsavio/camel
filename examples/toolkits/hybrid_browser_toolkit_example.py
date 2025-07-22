@@ -100,7 +100,7 @@ agent = ChatAgent(
     model=model_backend,
     tools=[*web_toolkit_custom.get_tools(), *file_toolkit.get_tools()],
     toolkits_to_register_agent=[web_toolkit_custom],
-    max_iteration=10,
+    max_iteration=20,
 )
 
 TASK_PROMPT = r"""
@@ -116,7 +116,8 @@ If you see a cookie page, click accept all.
 """
 TASK_PROMPT = (
     "Use Google Search and provide me the exact last line from "
-    "the definition of SVG in wikipedia."
+    "the definition of SVG in wikipedia. "
+    "You may only use single browser"
 )
 
 
