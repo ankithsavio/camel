@@ -108,3 +108,11 @@ export interface VisualMarkResult {
   images: string[];
 }
 
+export interface LinkData {
+  text: string;
+  ref: string;
+  url: string;
+}
+export interface LinkResult {
+  links: LinkData[];
+}

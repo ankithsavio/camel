@@ -197,6 +197,10 @@ class WebSocketBrowserServer {
       case 'wait_user':
         if (!this.toolkit) throw new Error('Toolkit not initialized');
         return await this.toolkit.waitUser(params.timeout);
+      
+      case 'get_page_links':
+        if (!this.toolkit) throw new Error('Toolkit not initialized');
+        return await this.toolkit.getPageLinks(params.ref);
 
       case 'shutdown':
         console.log('Shutting down server...');

@@ -39,7 +39,9 @@ from typing import Any, Dict, List, Optional
 
 from colorama import Fore
 
-from camel.toolkits.hybrid_browser_toolkit_py import HybridBrowserToolkit
+from camel.toolkits.hybrid_browser_toolkit.hybrid_browser_toolkit_ts import (
+    HybridBrowserToolkit,
+)
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(script_dir)
@@ -86,7 +88,7 @@ class BrowserDebugDemo:
 
             # Auto-navigate to Google on startup
             print("Auto-navigating to https://google.com...")
-            result = await self.toolkit.open_browser()
+            result = await self.toolkit.browser_open()
             print(f"Navigation result: {result['snapshot']}")
 
             # Auto-execute click e117 for testing
@@ -222,10 +224,10 @@ class BrowserDebugDemo:
             return await self._cmd_close_tab(args)
         elif cmd == 'get_tab_info':
             return await self._cmd_get_tab_info(args)
-        elif cmd == 'debug_elements':
-            return await self._cmd_debug_elements(args)
-        elif cmd == 'debug':
-            return await self._debug_element_info(args[0])
+        # elif cmd == 'debug_elements':
+        #     return await self._cmd_debug_elements(args)
+        # elif cmd == 'debug':
+        #     return await self._debug_element_info(args[0])
         elif cmd == 'snapshot_mode':
             return await self._cmd_snapshot_mode(args)
         else:
@@ -296,7 +298,7 @@ Tips:
         try:
             if self.toolkit is None:
                 return "Toolkit not initialized"
-            result = await self.toolkit.visit_page(url)
+            result = await self.toolkit.browser_visit_page(url)
             return (
                 "Navigated to: {url}\nFull"
                 f"result: {self._get_result_snapshot(result)}"
@@ -309,7 +311,7 @@ Tips:
         try:
             if self.toolkit is None:
                 return "Toolkit not initialized"
-            result = await self.toolkit.back()
+            result = await self.toolkit.browser_back()
             return (
                 "Navigated back in browser history\n"
                 f"Full result: {self._get_result_snapshot(result)}"
@@ -322,7 +324,7 @@ Tips:
         try:
             if self.toolkit is None:
                 return "Toolkit not initialized"
-            result = await self.toolkit.forward()
+            result = await self.toolkit.browser_forward()
             return (
                 "Navigated forward in browser history\nFull "
                 f"result: {self._get_result_snapshot(result)}"
@@ -340,10 +342,10 @@ Tips:
             if self.toolkit is None:
                 return "Toolkit not initialized"
 
-            # Debug: Check if element exists before clicking
-            await self._debug_element_info(ref)
+            # # Debug: Check if element exists before clicking
+            # await self._debug_element_info(ref)
 
-            result = await self.toolkit.click(ref=ref)
+            result = await self.toolkit.browser_click(ref=ref)
             return (
                 f"Clicked element {ref}\nFull "
                 f"result: {self._get_result_snapshot(result)}"
@@ -352,135 +354,135 @@ Tips:
         except Exception as e:
             return f"Click failed: {e}"
 
-    async def _debug_element_info(self, ref: str) -> str:
-        """Debug helper to check element information before click."""
-        if self.toolkit is None:
-            return "Toolkit not initialized"
+    # async def _debug_element_info(self, ref: str) -> str:
+    #     """Debug helper to check element information before click."""
+    #     if self.toolkit is None:
+    #         return "Toolkit not initialized"
 
-        try:
-            # Get page handle
-            page = await self.toolkit._require_page()
+    #     try:
+    #         # Get page handle
+    #         page = await self.toolkit._require_page()
 
-            # First, run unified analysis to ensure aria-ref attributes are set
-            analysis = await self.toolkit._get_unified_analysis()
+    #         # First, run unified analysis to ensure aria-ref attributes are set
+    #         analysis = await self.toolkit._get_unified_analysis()
 
-            # Check if element exists in analysis
-            elements = analysis.get("elements", {})
-            if ref not in elements:
-                print(
-                    f"DEBUG: Element {ref} not found in analysis. Available "
-                    f"refs: {list(elements.keys())[:10]}..."
-                )
-                return f"Element {ref} not found in analysis"
+    #         # Check if element exists in analysis
+    #         elements = analysis.get("elements", {})
+    #         if ref not in elements:
+    #             print(
+    #                 f"DEBUG: Element {ref} not found in analysis. Available "
+    #                 f"refs: {list(elements.keys())[:10]}..."
+    #             )
+    #             return f"Element {ref} not found in analysis"
 
-            element_info = elements[ref]
-            print(f"DEBUG: Element {ref} info: {element_info}")
+    #         element_info = elements[ref]
+    #         print(f"DEBUG: Element {ref} info: {element_info}")
 
-            # Check if element exists in DOM with aria-ref
-            selector = f'[aria-ref="{ref}"]'
-            element_count = await page.locator(selector).count()
-            print(
-                f"DEBUG: Found {element_count} elements with selector "
-                f"{selector}"
-            )
+    #         # Check if element exists in DOM with aria-ref
+    #         selector = f'[aria-ref="{ref}"]'
+    #         element_count = await page.locator(selector).count()
+    #         print(
+    #             f"DEBUG: Found {element_count} elements with selector "
+    #             f"{selector}"
+    #         )
 
-            # Check for duplicates and warn if found
-            if element_count > 1:
-                print(
-                    f"WARNING: Multiple elements ({element_count}) found "
-                    f"with selector {selector}"
-                )
-                print(
-                    "This indicates a potential issue with element reference "
-                    "assignment."
-                )
+    #         # Check for duplicates and warn if found
+    #         if element_count > 1:
+    #             print(
+    #                 f"WARNING: Multiple elements ({element_count}) found "
+    #                 f"with selector {selector}"
+    #             )
+    #             print(
+    #                 "This indicates a potential issue with element reference "
+    #                 "assignment."
+    #             )
 
-                # Get details about all matching elements
-                all_elements = page.locator(selector)
-                for i in range(
-                    min(element_count, 3)
-                ):  # Check first 3 elements
-                    try:
-                        elem = all_elements.nth(i)
-                        tag_name = await elem.evaluate("el => el.tagName")
-                        text_content = await elem.text_content()
-                        is_visible = await elem.is_visible()
-                        print(
-                            f"  Element {i}: {tag_name}, visible: "
-                            f"{is_visible}, text: "
-                            f"{text_content[:50] if text_content else 'None'}"
-                        )
-                    except Exception as e:
-                        print(f"  Element {i}: Error getting details - {e}")
+    #             # Get details about all matching elements
+    #             all_elements = page.locator(selector)
+    #             for i in range(
+    #                 min(element_count, 3)
+    #             ):  # Check first 3 elements
+    #                 try:
+    #                     elem = all_elements.nth(i)
+    #                     tag_name = await elem.evaluate("el => el.tagName")
+    #                     text_content = await elem.text_content()
+    #                     is_visible = await elem.is_visible()
+    #                     print(
+    #                         f"  Element {i}: {tag_name}, visible: "
+    #                         f"{is_visible}, text: "
+    #                         f"{text_content[:50] if text_content else 'None'}"
+    #                     )
+    #                 except Exception as e:
+    #                     print(f"  Element {i}: Error getting details - {e}")
 
-                # Check analysis metadata for duplicate information
-                metadata = analysis.get("metadata", {})
-                if metadata.get("duplicateRefsFound"):
-                    print(
-                        f"DEBUG: Analysis detected duplicate refs: "
-                        f"{metadata.get('ariaRefCounts', {})}"
-                    )
+    #             # Check analysis metadata for duplicate information
+    #             metadata = analysis.get("metadata", {})
+    #             if metadata.get("duplicateRefsFound"):
+    #                 print(
+    #                     f"DEBUG: Analysis detected duplicate refs: "
+    #                     f"{metadata.get('ariaRefCounts', {})}"
+    #                 )
 
-            if element_count > 0:
-                # Get element details for the first element
-                element = page.locator(selector).first
-                is_visible = await element.is_visible()
-                is_enabled = await element.is_enabled()
-                tag_name = await element.evaluate("el => el.tagName")
+    #         if element_count > 0:
+    #             # Get element details for the first element
+    #             element = page.locator(selector).first
+    #             is_visible = await element.is_visible()
+    #             is_enabled = await element.is_enabled()
+    #             tag_name = await element.evaluate("el => el.tagName")
 
-                print(
-                    f"DEBUG: First element details - Visible: {is_visible}, "
-                    f"Enabled: {is_enabled}, Tag: {tag_name}"
-                )
+    #             print(
+    #                 f"DEBUG: First element details - Visible: {is_visible}, "
+    #                 f"Enabled: {is_enabled}, Tag: {tag_name}"
+    #             )
 
-                # Try to get bounding box
-                try:
-                    bbox = await element.bounding_box()
-                    print(f"DEBUG: Bounding box: {bbox}")
-                except Exception as e:
-                    print(f"DEBUG: Could not get bounding box: {e}")
+    #             # Try to get bounding box
+    #             try:
+    #                 bbox = await element.bounding_box()
+    #                 print(f"DEBUG: Bounding box: {bbox}")
+    #             except Exception as e:
+    #                 print(f"DEBUG: Could not get bounding box: {e}")
 
-            return (
-                f"Debug info printed for {ref} ({element_count} elements "
-                f"found)"
-            )
+    #         return (
+    #             f"Debug info printed for {ref} ({element_count} elements "
+    #             f"found)"
+    #         )
 
-        except Exception as e:
-            print(f"DEBUG: Error getting element info: {e}")
-            return f"Debug error: {e}"
+    #     except Exception as e:
+    #         print(f"DEBUG: Error getting element info: {e}")
+    #         return f"Debug error: {e}"
 
-    async def _cmd_debug_elements(self, args: List[str]) -> Any:
-        """Handle debug_elements command - show all available elements."""
-        try:
-            if self.toolkit is None:
-                return "Toolkit not initialized"
+    # async def _cmd_debug_elements(self, args: List[str]) -> Any:
+    #     """Handle debug_elements command - show all available elements."""
+    #     try:
+    #         if self.toolkit is None:
+    #             return "Toolkit not initialized"
 
-            # Get analysis data
-            analysis = await self.toolkit._get_unified_analysis()
-            elements = analysis.get("elements", {})
+    #         # Get analysis data
+    #         analysis = await self.toolkit._get_unified_analysis()
+    #         elements = analysis.get("elements", {})
 
-            if not elements:
-                return "No elements found in current page"
+    #         if not elements:
+    #             return "No elements found in current page"
 
-            output = f"Found {len(elements)} elements:\n"
-            for ref, info in list(elements.items())[:20]:  # Limit to first 20
-                role = info.get("role", "unknown")
-                name = info.get("name", "")
-                output += f"  {ref}: {role}"
-                if name:
-                    output += f' "{name[:30]}"'
-                output += "\n"
+    #         output = f"Found {len(elements)} elements:\n"
+    #         for ref, info in list(elements.items())[:20]:  # Limit to first 20
+    #             role = info.get("role", "unknown")
+    #             name = info.get("name", "")
+    #             output += f"  {ref}: {role}"
+    #             if name:
+    #                 output += f' "{name[:30]}"'
+    #             output += "\n"
 
-            if len(elements) > 20:
-                output += (
-                    f"... and {len(elements) - 20} more elements. Use "
-                    f"'snapshot' to see all."
-                )
+    #         if len(elements) > 20:
+    #             output += (
+    #                 f"... and {len(elements) - 20} more elements. Use "
+    #                 f"'snapshot' to see all."
+    #             )
 
-            return output
+    #         return output
 
-        except Exception as e:
-            return f"Debug elements failed: {e}"
+    #     except Exception as e:
+    #         return f"Debug elements failed: {e}"
 
     async def _cmd_snapshot_mode(self, args: List[str]) -> Any:
         """Handle snapshot_mode command - show current snapshot mode."""
@@ -505,7 +507,7 @@ Tips:
         try:
             if self.toolkit is None:
                 return "Toolkit not initialized"
-            result = await self.toolkit.type(ref=ref, text=text)
+            result = await self.toolkit.browser_type(ref=ref, text=text)
             return (
                 "Typed '{text}' into element {ref}\nFull "
                 f"result: {self._get_result_snapshot(result)}"
@@ -524,7 +526,7 @@ Tips:
         try:
             if self.toolkit is None:
                 return "Toolkit not initialized"
-            result = await self.toolkit.select(ref=ref, value=value)
+            result = await self.toolkit.browser_select(ref=ref, value=value)
             return (
                 "Selected '{value}' in element {ref}\nFull "
                 f"result: {self._get_result_snapshot(result)}"
@@ -540,7 +542,7 @@ Tips:
         try:
             if self.toolkit is None:
                 return "Toolkit not initialized"
-            result = await self.toolkit.enter()
+            result = await self.toolkit.browser_enter()
             return (
                 "Pressed Enter key\nFull "
                 f"result: {self._get_result_snapshot(result)}"
@@ -553,7 +555,7 @@ Tips:
         try:
             if self.toolkit is None:
                 return "Toolkit not initialized"
-            result = await self.toolkit.get_page_snapshot()
+            result = await self.toolkit.browser_get_page_snapshot()
             decorate_end = (
                 "\n" + f"{Fore.GREEN}" + ("@" * 150) + f"{Fore.RESET}"
             )
@@ -567,15 +569,15 @@ Tips:
         try:
             if self.toolkit is None:
                 return "Toolkit not initialized"
-            result = await self.toolkit.get_som_screenshot()
+            result = await self.toolkit.browser_get_som_screenshot()
 
-            if "PIL not available" in result.text:
+            if "PIL not available" in result:
                 return (
                     "Screenshot failed: PIL (Pillow) not available. "
                     "Install with: pip install Pillow"
                 )
 
-            return f"SoM Screenshot captured: {result.text}"
+            return f"SoM Screenshot captured: {result}"
         except Exception as e:
             return f"Screenshot failed: {e}"
 
@@ -587,7 +589,8 @@ Tips:
         try:
             if self.toolkit is None:
                 return "Toolkit not initialized"
-            result = await self.toolkit.get_page_links(ref=args)
+            # missing implementation
+            result = await self.toolkit.browser_get_page_links(ref=args)
 
             return str(result).rstrip()
         except Exception as e:
@@ -603,7 +606,7 @@ Tips:
             if args and args[0].isdigit():
                 timeout = float(args[0])
 
-            result = await self.toolkit.wait_user(timeout_sec=timeout)
+            result = await self.toolkit.browser_wait_user(timeout_sec=timeout)
             return (
                 "Wait completed\nFull "
                 f"result: {self._get_result_snapshot(result)}"
@@ -616,11 +619,11 @@ Tips:
         if not args or not args[0].isdigit():
             return "Usage: switch_tab <index> (e.g., switch_tab 1)"
 
-        tab_index = int(args[0])
+        tab_index = args[0]  # str
         try:
             if self.toolkit is None:
                 return "Toolkit not initialized"
-            result = await self.toolkit.switch_tab(tab_index=tab_index)
+            result = await self.toolkit.browser_switch_tab(tab_id=tab_index)
 
             # Don't print the full snapshot, it's too verbose
             snapshot = result.get("snapshot", "")
@@ -644,11 +647,11 @@ Tips:
         if not args or not args[0].isdigit():
             return "Usage: close_tab <index> (e.g., close_tab 1)"
 
-        tab_index = int(args[0])
+        tab_index = args[0]
         try:
             if self.toolkit is None:
                 return "Toolkit not initialized"
-            result = await self.toolkit.close_tab(tab_index=tab_index)
+            result = await self.toolkit.browser_close_tab(tab_id=tab_index)
             return (
                 "Closed tab {tab_index}\nFull "
                 f"result: {self._get_result_snapshot(result)}"
@@ -662,7 +665,7 @@ Tips:
             if self.toolkit is None:
                 return "Toolkit not initialized"
 
-            result = await self.toolkit.get_tab_info()
+            result = await self.toolkit.browser_get_tab_info()
 
             if not result.get("tabs"):
                 return "No open tabs."
@@ -698,7 +701,7 @@ Tips:
         """Cleanup resources."""
         if self.toolkit:
             try:
-                await self.toolkit.close_browser()
+                await self.toolkit.browser_close()
                 print("Browser closed")
             except Exception as e:
                 print(f"Cleanup warning: {e}")

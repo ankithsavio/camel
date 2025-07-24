@@ -580,3 +580,9 @@ class WebSocketBrowserWrapper:
             'wait_user', {'timeout': timeout_sec}
         )
         return response
+
+    @action_logger
+    async def get_page_links(self, ref: List[str]) -> Dict[str, Any]:
+        """Gets the destination URLs for a list of link elements."""
+        response = await self._send_command('get_page_links', {'ref': ref})
+        return response
